@@ -1,0 +1,47 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "fastapi_config"
+authors = [
+    { name = "Atomi", email = "1456417373@qq.com" },
+]
+maintainers = [
+    { name = "Atomi", email = "1456417373@qq.com" },
+]
+description = "FastAPI-Config is a visual dynamic configuration management extension based on FastAPI-Amis-Admin."
+readme = "README.md"
+requires-python = ">=3.6.1"
+dynamic = ["version"]
+keywords = [
+    "FastAPI-Amis-Admin",
+    "FastAPI-Config",
+    "Python-Config",
+]
+classifiers = [
+    "Framework :: FastAPI",
+    "Environment :: Web Environment",
+    "Topic :: System :: Systems Administration",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "fastapi-amis-admin>=0.2.0,<0.3.0",
+    "asyncer",
+]
+
+[project.urls]
+Source = "https://github.com/amisadmin/fastapi_config"
+FastAPI-Amis-Admin = "https://github.com/amisadmin/fastapi_amis_admin"
+
+[project.optional-dependencies]
+test = [
+    "pytest >=6.2.4,<7.0.0",
+]
