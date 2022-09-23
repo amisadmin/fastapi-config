@@ -1,21 +1,22 @@
-from typing import Dict, Type, TypeVar, Union, Optional, overload
+from typing import Dict, Optional, Type, TypeVar, Union, overload
 
 import asyncer
-from fastapi_config.models import ConfigModel
 from pydantic import BaseModel
 from sqlalchemy import select
-from sqlalchemy_database import Database, AsyncDatabase
+from sqlalchemy_database import AsyncDatabase, Database
 
-_BaseModelT = TypeVar("_BaseModelT", bound = "BaseModel")
+from fastapi_config.models import ConfigModel
+
+_BaseModelT = TypeVar("_BaseModelT", bound="BaseModel")
 _KT = Union[str, Type[_BaseModelT]]
 
-class BaseConfigStore:
 
+class BaseConfigStore:
     def __init__(self):
         self.__cached__: Dict[str, ConfigModel] = {}
 
     def get_key(self, k: _KT) -> str:
-        return k if isinstance(k, str) else getattr(k, '__key__', k.__name__)
+        return k if isinstance(k, str) else getattr(k, "__key__", k.__name__)
 
     def clear_cache(self, k: _KT):
         key = self.get_key(k)
@@ -42,7 +43,7 @@ class BaseConfigStore:
         ...
 
     async def get(self, k: _KT, cache: bool = True) -> Optional[Union[_BaseModelT, str]]:
-        obj = await self.read(k, cache = cache)
+        obj = await self.read(k, cache=cache)
         if not obj:
             return None
         return obj.data if isinstance(k, str) else k.parse_raw(obj.data)
@@ -61,7 +62,7 @@ class BaseConfigStore:
             key, data = k.__class__, k.json()
         else:
             key, data = k, v
-        await self.save(key, data = data)
+        await self.save(key, data=data)
 
     """以下方法为同步方法,非必要不推荐频繁调用;如需频繁调用,可重写`sread`,`ssave`方法."""
 
@@ -69,12 +70,12 @@ class BaseConfigStore:
         """读取配置,同步调用方法"""
         key = self.get_key(k)
         if not cache or key not in self.__cached__:
-            return asyncer.syncify(self.read, raise_sync_error = False)(k = k, cache = cache)
+            return asyncer.syncify(self.read, raise_sync_error=False)(k=k, cache=cache)
         return self.__cached__[key]
 
     def ssave(self, k: _KT, data: str) -> bool:
         """保存配置,同步调用方法"""
-        return asyncer.syncify(self.save, raise_sync_error = False)(k, data)
+        return asyncer.syncify(self.save, raise_sync_error=False)(k, data)
 
     @overload
     def sget(self, k: str, cache: bool = True) -> Optional[str]:
@@ -85,7 +86,7 @@ class BaseConfigStore:
         ...
 
     def sget(self, k: _KT, cache: bool = True) -> Optional[Union[_BaseModelT, str]]:
-        obj = self.sread(k, cache = cache)
+        obj = self.sread(k, cache=cache)
         if not obj:
             return None
         return obj.data if isinstance(k, str) else k.parse_raw(obj.data)
@@ -104,10 +105,10 @@ class BaseConfigStore:
             key, data = k.__class__, k.json()
         else:
             key, data = k, v
-        self.ssave(key, data = data)
+        self.ssave(key, data=data)
+
 
 class DbConfigStore(BaseConfigStore):
-
     def __init__(self, db: Union[Database, AsyncDatabase]):
         super().__init__()
         self.db = db
@@ -120,10 +121,10 @@ class DbConfigStore(BaseConfigStore):
         return self.__cached__[key]
 
     async def save(self, k: _KT, data: str) -> bool:
-        obj = await self.read(k, cache = False)
+        obj = await self.read(k, cache=False)
         if obj is None:
             key = self.get_key(k)
-            obj = ConfigModel(key = key, name = key)
+            obj = ConfigModel(key=key, name=key)
         obj.data = data
         await self.db.async_save(obj)
         self.clear_cache(k)
@@ -136,18 +137,18 @@ class DbConfigStore(BaseConfigStore):
             if isinstance(self.db, Database):
                 return self.db.scalar(stmt)
             else:
-                return asyncer.syncify(self.db.scalar, raise_sync_error = False)(stmt)
+                return asyncer.syncify(self.db.scalar, raise_sync_error=False)(stmt)
         return self.__cached__[key]
 
     def ssave(self, k: _KT, data: str) -> bool:
-        obj = self.sread(k, cache = False)
+        obj = self.sread(k, cache=False)
         if obj is None:
             key = self.get_key(k)
-            obj = ConfigModel(key = key, name = key)
+            obj = ConfigModel(key=key, name=key)
         obj.data = data
         if isinstance(self.db, Database):
             self.db.save(obj)
         else:
-            asyncer.syncify(self.db.save, raise_sync_error = False)(obj)
+            asyncer.syncify(self.db.save, raise_sync_error=False)(obj)
         self.clear_cache(k)
         return True

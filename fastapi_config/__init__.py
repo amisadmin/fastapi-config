@@ -1,4 +1,4 @@
-__version__ = "0.0.1"
+__version__ = "0.0.3"
 __url__ = "https://github.com/amisadmin/fastapi_config"
 
 import gettext
@@ -9,13 +9,7 @@ from fastapi_amis_admin import i18n
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 i18n.load_translations(
-    {
-        "zh_CN": gettext.translation(
-            domain = 'messages',
-            localedir = os.path.join(BASE_DIR, "locale"),
-            languages = ['zh_CN']
-        )
-    }
+    {"zh_CN": gettext.translation(domain="messages", localedir=os.path.join(BASE_DIR, "locale"), languages=["zh_CN"])}
 )
 
 from .admin import ConfigAdmin, ConfigModelAdmin

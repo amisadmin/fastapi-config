@@ -55,14 +55,26 @@ source = "file"
 path = "fastapi_config/__init__.py"
 
 [tool.pdm.build]
-# Specify where the Python packages live.
-package-dir = "fastapi_config"
 # File patterns to include, the paths are relative to the project root.
 includes = [
-    "fastapi_config/locale/**",
+    "fastapi_config/**",
 ]
 
 [tool.pdm.dev-dependencies]
 dev = [
     "pytest>=7.1.3",
+    "pre-commit>=2.20.0",
 ]
+
+[tool.pdm.scripts]
+lint = "pre-commit run --all-files"
+test= "pytest"
+
+[tool.isort]
+profile = "black"
+atomic = true
+filter_files = true
+
+[tool.black]
+line-length = 130
+include = '\.pyi?$'
