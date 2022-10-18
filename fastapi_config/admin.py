@@ -13,8 +13,7 @@ from .models import ConfigModel
 
 
 class ConfigModelAdmin(admin.ModelAdmin):
-    group_schema = None
-    page_schema = PageSchema(label=_("Configuration"), icon="fa fa-group")
+    page_schema = PageSchema(label=_("Configuration"), icon="fa fa-cog")
     model = ConfigModel
     readonly_fields = ["key"]
 

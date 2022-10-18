@@ -1,16 +1,24 @@
-import asyncio
+from typing import Union
 
 import pytest
-from fastapi_amis_admin.admin import AdminSite, Settings
+from sqlalchemy_database import AsyncDatabase, Database
 from sqlmodel import SQLModel
 
-site = AdminSite(settings=Settings(debug=False, database_url_async="sqlite+aiosqlite:///:memory:"))
+from fastapi_config import BaseConfigStore, DbConfigStore
+
+# sqlite
+sync_db = Database.create("sqlite:///amisadmin.db?check_same_thread=False")
+async_db = AsyncDatabase.create("sqlite+aiosqlite:///amisadmin.db?check_same_thread=False")
 
 
-@pytest.fixture(scope="session", autouse=True)
-def startup():
-    asyncio.run(init_db())
+@pytest.fixture(params=[async_db, sync_db])
+async def db(request) -> Union[Database, AsyncDatabase]:
+    database = request.param
+    await database.async_run_sync(SQLModel.metadata.create_all, is_session=False)
+    yield database
+    await database.async_run_sync(SQLModel.metadata.drop_all, is_session=False)
 
 
-async def init_db():
-    await site.db.async_run_sync(SQLModel.metadata.create_all, is_session=False)
+@pytest.fixture
+def config_store(db) -> BaseConfigStore:
+    return DbConfigStore(db=db)
