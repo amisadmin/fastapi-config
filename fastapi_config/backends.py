@@ -2,7 +2,7 @@ from typing import Dict, Optional, Type, TypeVar, Union, overload
 
 import asyncer
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy_database import AsyncDatabase, Database
 
 from fastapi_config.models import ConfigModel
@@ -117,16 +117,18 @@ class DbConfigStore(BaseConfigStore):
         key = self.get_key(k)
         if not cache or key not in self.__cached__:
             stmt = select(ConfigModel).where(ConfigModel.key == key)
-            self.__cached__[key] = await self.db.async_scalar(stmt)
+            obj = await self.db.async_scalar(stmt)
+            self.__cached__[key] = obj.copy() if obj else None  # fix: sqlalchemy Instance is not bound to a Session
         return self.__cached__[key]
 
     async def save(self, k: _KT, data: str) -> bool:
         obj = await self.read(k, cache=False)
         if obj is None:
             key = self.get_key(k)
-            obj = ConfigModel(key=key, name=key)
-        obj.data = data
-        await self.db.async_save(obj)
+            obj = ConfigModel(key=key, name=key, data=data)
+            await self.db.async_save(obj)
+        else:
+            await self.db.async_execute(update(ConfigModel).where(ConfigModel.key == obj.key).values(data=data))
         self.clear_cache(k)
         return True
 
@@ -135,20 +137,21 @@ class DbConfigStore(BaseConfigStore):
         if not cache or key not in self.__cached__:
             stmt = select(ConfigModel).where(ConfigModel.key == key)
             if isinstance(self.db, Database):
-                return self.db.scalar(stmt)
+                obj = self.db.scalar(stmt)
             else:
-                return asyncer.syncify(self.db.scalar, raise_sync_error=False)(stmt)
+                obj = asyncer.syncify(self.db.scalar, raise_sync_error=False)(stmt)
+            self.__cached__[key] = obj.copy() if obj else None  # fix: sqlalchemy Instance is not bound to a Session
         return self.__cached__[key]
 
     def ssave(self, k: _KT, data: str) -> bool:
+        if not isinstance(self.db, Database):
+            return super().ssave(k=k, data=data)
         obj = self.sread(k, cache=False)
         if obj is None:
             key = self.get_key(k)
-            obj = ConfigModel(key=key, name=key)
-        obj.data = data
-        if isinstance(self.db, Database):
+            obj = ConfigModel(key=key, name=key, data=data)
             self.db.save(obj)
         else:
-            asyncer.syncify(self.db.save, raise_sync_error=False)(obj)
+            self.db.execute(update(ConfigModel).where(ConfigModel.key == obj.key).values(data=data))
         self.clear_cache(k)
         return True
