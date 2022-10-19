@@ -1,3 +1,6 @@
+[简体中文](https://github.com/amisadmin/fastapi_config/blob/master/README.zh.md)
+| [English](https://github.com/amisadmin/fastapi_config)
+
 <h2 align="center">
   FastAPI-Config
 </h2>

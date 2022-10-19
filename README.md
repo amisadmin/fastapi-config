@@ -1,3 +1,6 @@
+[简体中文](https://github.com/amisadmin/fastapi_config/blob/master/README.zh.md)
+| [English](https://github.com/amisadmin/fastapi_config)
+
 <h2 align="center">
   FastAPI-Config
 </h2>
@@ -16,17 +19,17 @@
     </a>
 </p>
 
-## 项目介绍
+## Project Introduction
 
-`FastAPI-Config`是一个基于`FastAPI-Amis-Admin`的可视化动态配置管理拓展包.
+`Fast API-Config` is a visual dynamic configuration management extension package based on `FastAPI-Amis-Admin`.
 
-## 安装
+## Install
 
 ```bash
 pip install fastapi-config
 ```
 
-## 简单示例
+## Simple example
 
 **main.py**:
 
@@ -40,33 +43,33 @@ from sqlmodel import SQLModel
 from pydantic import BaseModel
 from typing import List
 
-# 创建`FastAPI`应用
+# Create a `FastAPI` application
 app = FastAPI()
 
-# 创建`AdminSite`实例
+# Create `AdminSite` instance
 site = AdminSite(settings=Settings(database_url_async='sqlite+aiosqlite:///amisadmin.db'))
 
-# 创建配置存储库
+# Create a configuration repository
 dbconfig = DbConfigStore(site.db)
 
-# 注册管理页面(可选)
+# Register Admin (optional)
 site.register_admin(ConfigModelAdmin)
 
 
 class ContactCfg(BaseModel):
-    name: str = Field("", title="联系人")
+    name: str = Field("", title="Name")
     qq: List[str] = Field("", title="QQ")
 
 
 class SiteCfg(BaseModel):
-    name: str = Field(..., title="网站名称")
-    logo: str = Field("", title="网站LOGO", amis_form_item=amis.InputImage())
-    contacts: List[ContactCfg] = Field([], title="客服列表")
-    domains: List[str] = Field([], title='域名列表')
+    name: str = Field(..., title="Site Name")
+    logo: str = Field("", title="Site LOGO", amis_form_item=amis.InputImage())
+    contacts: List[ContactCfg] = Field([], title="Contact list")
+    domains: List[str] = Field([], title='Domain list')
 
 
 class SiteCfgAdmin(ConfigAdmin):
-    page_schema = amis.PageSchema(label='站点信息')
+    page_schema = amis.PageSchema(label='Site Config')
     schema = SiteCfg
 
 
@@ -80,9 +83,9 @@ async def read_config():
 
 @app.on_event("startup")
 async def startup():
-    # 挂载后台管理系统
+    # Mount the site to the FastAPI instance
     site.mount_app(app)
-    # 创建数据库表(第一次运行时需要)
+    # Create database tables (required for first run)
     await site.db.async_run_sync(SQLModel.metadata.create_all, is_session=False)
 
 
@@ -92,16 +95,16 @@ if __name__ == '__main__':
     uvicorn.run(app, debug=True)
 ```
 
-## 界面预览
+## Interface/UI Preview
 
 - Open `http://127.0.0.1:8000/admin/` in your browser:
 
 ![SchedulerAdmin](https://img-blog.csdnimg.cn/0e3b49a10f2d4f65977b60b3fc35057f.png#pic_center)
 
-## 依赖项目
+## Dependent project
 
 - [FastAPI-Amis-Admin](https://docs.amis.work/)
 
-## 许可协议
+## License
 
-该项目遵循 Apache2.0 许可协议。
+The project follows the Apache2.0 license agreement.
