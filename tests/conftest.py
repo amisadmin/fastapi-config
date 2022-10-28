@@ -17,6 +17,7 @@ async def db(request) -> Union[Database, AsyncDatabase]:
     await database.async_run_sync(SQLModel.metadata.create_all, is_session=False)
     yield database
     await database.async_run_sync(SQLModel.metadata.drop_all, is_session=False)
+    await database.async_close()
 
 
 @pytest.fixture
