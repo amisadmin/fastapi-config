@@ -5,13 +5,13 @@
 
 version: 2
 updates:
-  # GitHub Actions
-  - package-ecosystem: "github-actions" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "chore: "
+#   # GitHub Actions
+#   - package-ecosystem: "github-actions" # See documentation for possible values
+#     directory: "/" # Location of package manifests
+#     schedule:
+#       interval: "weekly"
+#     commit-message:
+#       prefix: "chore: "
   # Python
   - package-ecosystem: "pip"
     directory: "/"
