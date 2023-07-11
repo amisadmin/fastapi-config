@@ -15,7 +15,7 @@ from .models import ConfigModel
 class ConfigModelAdmin(admin.ModelAdmin):
     page_schema = PageSchema(label=_("Configuration"), icon="fa fa-cog")
     model = ConfigModel
-    readonly_fields = ["key"]
+    update_exclude = ["key"]
 
 
 class ConfigAdmin(admin.FormAdmin):
