@@ -36,3 +36,9 @@ msgstr "Beschreibung"
 
 msgid "Data"
 msgstr "Daten"
+
+msgid "Create Time"
+msgstr "Erstellungszeit"
+
+msgid "Update Time"
+msgstr "Aktualisierungszeit"

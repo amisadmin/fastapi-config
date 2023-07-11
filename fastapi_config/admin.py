@@ -15,7 +15,8 @@ from .models import ConfigModel
 class ConfigModelAdmin(admin.ModelAdmin):
     page_schema = PageSchema(label=_("Configuration"), icon="fa fa-cog")
     model = ConfigModel
-    update_exclude = ["key"]
+    create_exclude = {"id", "create_time", "update_time"}
+    update_exclude = {"id", "key", "create_time", "update_time"}
 
 
 class ConfigAdmin(admin.FormAdmin):
