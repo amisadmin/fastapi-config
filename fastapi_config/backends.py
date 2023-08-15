@@ -59,7 +59,7 @@ class BaseConfigStore:
     async def set(self, k: Union[_KT, _BaseModelT], v: str = None):
         """保存数据到存储库;如果不存在则插入"""
         if issubclass(type(k), BaseModel):
-            key, data = k.__class__, k.json()
+            key, data = k.__class__, k.json(by_alias=True)
         else:
             key, data = k, v
         await self.save(key, data=data)
@@ -102,7 +102,7 @@ class BaseConfigStore:
     def sset(self, k: Union[_KT, _BaseModelT], v: str = None):
         """保存数据到存储库;如果不存在则插入"""
         if issubclass(type(k), BaseModel):
-            key, data = k.__class__, k.json()
+            key, data = k.__class__, k.json(by_alias=True)
         else:
             key, data = k, v
         self.ssave(key, data=data)
