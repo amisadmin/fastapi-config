@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from fastapi_config import DbConfigStore
+
 
 class SiteConfig(BaseModel):
     name: str = ""
@@ -53,3 +55,8 @@ def test_schema_key_sync(config_store):
     config_store.sset(SiteConfig, val2.json())
     data = config_store.sget(key)
     assert data == val2
+
+
+def test_new_instance(config_store):
+    store = DbConfigStore(config_store.db)
+    assert store is config_store

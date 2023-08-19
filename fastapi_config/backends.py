@@ -3,7 +3,7 @@ from typing import Dict, Optional, Type, TypeVar, Union, overload
 import asyncer
 from pydantic import BaseModel
 from sqlalchemy import select, update
-from sqlalchemy_database import AsyncDatabase, Database
+from sqlalchemy_database import AbcAsyncDatabase, AsyncDatabase, Database
 
 from fastapi_config.models import ConfigModel
 
@@ -109,6 +109,15 @@ class BaseConfigStore:
 
 
 class DbConfigStore(BaseConfigStore):
+    __instances__: Dict[AbcAsyncDatabase, "DbConfigStore"] = {}
+
+    def __new__(cls, db: Union[Database, AsyncDatabase]):
+        if db in cls.__instances__:
+            return cls.__instances__[db]
+        instance = super().__new__(cls)
+        cls.__instances__[db] = instance
+        return instance
+
     def __init__(self, db: Union[Database, AsyncDatabase]):
         super().__init__()
         self.db = db

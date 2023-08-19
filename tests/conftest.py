@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy_database import AsyncDatabase, Database
 from sqlmodel import SQLModel
 
-from fastapi_config import BaseConfigStore, DbConfigStore
+from fastapi_config import DbConfigStore
 
 # sqlite
 sync_db = Database.create("sqlite:///amisadmin.db?check_same_thread=False")
@@ -21,5 +21,5 @@ async def db(request) -> Union[Database, AsyncDatabase]:
 
 
 @pytest.fixture
-def config_store(db) -> BaseConfigStore:
+def config_store(db) -> DbConfigStore:
     return DbConfigStore(db=db)
