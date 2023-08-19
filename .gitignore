@@ -141,3 +141,4 @@ cython_debug/
 /dev/
 /.pdm.toml
 *.db
+/.pdm-python
