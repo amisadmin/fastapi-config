@@ -5,7 +5,7 @@ authors = [
 ]
 description = "FastAPI-Config is a visual dynamic configuration management extension based on FastAPI-Amis-Admin."
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dynamic = ["version"]
 keywords = [
     "FastAPI-Amis-Admin",
