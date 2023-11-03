@@ -157,6 +157,7 @@ class DbConfigStore(BaseConfigStore):
         if not cache or not self._config_cache.exists(k):
             obj = await self.db.async_run_sync(self._read_config, k=k)
             obj = obj.copy() if obj else None  # fix: sqlalchemy Instance is not bound to a Session
+            self._config_cache.set(k, obj)
             return obj
         return self._config_cache.get(k)
 
