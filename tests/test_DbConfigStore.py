@@ -11,7 +11,7 @@ class SiteConfig(BaseModel):
 async def test_string_key(config_store):
     key = "key1"
     val = "value1"
-    data = await config_store.get(key)
+    data = await config_store.get(key, cache=False)
     assert data is None
 
     await config_store.set(key, val)
@@ -21,7 +21,7 @@ async def test_string_key(config_store):
 
 async def test_schema_key(config_store):
     key = SiteConfig
-    data = await config_store.get(key)
+    data = await config_store.get(key, cache=False)
     assert data is None
 
     val = SiteConfig(name="amisadmin", url="https://docs.amis.work")
@@ -40,7 +40,7 @@ async def test_schema_key(config_store):
 
 def test_schema_key_sync(config_store):
     key = SiteConfig
-    data = config_store.sget(key)
+    data = config_store.sget(key, cache=False)
     assert data is None
 
     val = SiteConfig(name="amisadmin", url="https://docs.amis.work")

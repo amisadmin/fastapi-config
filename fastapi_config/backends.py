@@ -128,7 +128,7 @@ class DbConfigStore(BaseConfigStore):
     def __new__(cls, db: Union[Database, AsyncDatabase], **kwargs):
         if db in cls.__instances__:
             return cls.__instances__[db]
-        instance = super().__new__(cls, **kwargs)
+        instance = super().__new__(cls)
         cls.__instances__[db] = instance
         return instance
 
@@ -172,7 +172,7 @@ class DbConfigStore(BaseConfigStore):
             if isinstance(self.db, Database):
                 obj = self._read_config(self.db.session, k=k)
             else:
-                obj = asyncer.syncify(self.db.async_run_sync, raise_sync_error=False)(self._read_config, k=k)
+                obj = asyncer.syncify(self.db.async_run_sync, raise_sync_error=False)(self._read_config, k=k)  # type: ignore
             obj = obj.copy() if obj else None  # fix: sqlalchemy Instance is not bound to a Session
             self._config_cache.set(k, obj)
             return obj

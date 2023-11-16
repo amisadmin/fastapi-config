@@ -5,6 +5,8 @@ from sqlalchemy_database import AsyncDatabase, Database
 from sqlmodel import SQLModel
 
 from fastapi_config import DbConfigStore
+from fastapi_config.backends import BaseConfigCache
+
 
 # sqlite
 sync_db = Database.create("sqlite:///amisadmin.db?check_same_thread=False")
@@ -21,5 +23,15 @@ async def db(request) -> Union[Database, AsyncDatabase]:
 
 
 @pytest.fixture
-def config_store(db) -> DbConfigStore:
-    return DbConfigStore(db=db)
+def config_cache() -> BaseConfigCache:
+    # import redis
+    # from fastapi_config.extensions.redis import RedisConfigCache
+    # redis_dsn=""
+    # rds: redis.Redis = redis.from_url(redis_dsn, encoding="utf-8", decode_responses=True)
+    # return RedisConfigCache(rds)
+    return BaseConfigCache()
+
+
+@pytest.fixture
+def config_store(db, config_cache) -> DbConfigStore:
+    return DbConfigStore(db=db, config_cache=config_cache)
