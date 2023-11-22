@@ -7,7 +7,6 @@ from sqlmodel import SQLModel
 from fastapi_config import DbConfigStore
 from fastapi_config.backends import BaseConfigCache
 
-
 # sqlite
 sync_db = Database.create("sqlite:///amisadmin.db?check_same_thread=False")
 async_db = AsyncDatabase.create("sqlite+aiosqlite:///amisadmin.db?check_same_thread=False")

@@ -3,7 +3,7 @@ from typing import Optional
 from redis import Redis
 
 from fastapi_config import ConfigModel
-from fastapi_config.backends import BaseConfigCache, _KT
+from fastapi_config.backends import _KT, BaseConfigCache
 
 
 class RedisConfigCache(BaseConfigCache):
@@ -27,7 +27,7 @@ class RedisConfigCache(BaseConfigCache):
 
     def set(self, k: _KT, v: ConfigModel):
         key = self._get_cache_key(k)
-        value=v.json(by_alias=True) if v else ''
+        value = v.json(by_alias=True) if v else ""
         self.redis_client.set(key, value, ex=self.default_expire)
 
     def delete(self, k: _KT):
@@ -36,4 +36,4 @@ class RedisConfigCache(BaseConfigCache):
 
     def exists(self, k: _KT) -> bool:
         key = self._get_cache_key(k)
-        return self.redis_client.exists(key)
+        return self.redis_client.exists(key) > 0

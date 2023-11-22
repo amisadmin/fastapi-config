@@ -2,13 +2,14 @@ from functools import cached_property
 from typing import Any
 
 from fastapi_amis_admin import admin
+from fastapi_amis_admin import globals as g
 from fastapi_amis_admin.amis import DisplayModeEnum, Form, PageSchema
 from fastapi_amis_admin.crud import BaseApiOut
 from fastapi_amis_admin.utils.translation import i18n as _
 from pydantic import BaseModel
 from starlette.requests import Request
 
-from .backends import BaseConfigStore, DbConfigStore
+from .backends import BaseConfigStore
 from .models import ConfigModel
 
 
@@ -27,7 +28,7 @@ class ConfigAdmin(admin.FormAdmin):
 
     @cached_property
     def config_store(self) -> BaseConfigStore:
-        return DbConfigStore(db=self.site.db)
+        return g.config_store
 
     @property
     def page_path(self):
