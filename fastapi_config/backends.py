@@ -1,6 +1,7 @@
 from typing import Dict, Optional, Type, TypeVar, Union, overload
 
 import asyncer
+from fastapi_amis_admin.utils.pydantic import PYDANTIC_V2
 from pydantic import BaseModel
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
@@ -136,7 +137,7 @@ class DbConfigStore(BaseConfigStore):
         super().__init__(config_cache=config_cache)
         self.db = db
 
-    def _read_config(self, session: Session, k: _KT):
+    def _read_config(self, session: Session, k: _KT) -> Optional[ConfigModel]:
         key = ConfigModel.get_key(k)
         stmt = select(ConfigModel).where(ConfigModel.key == key)
         obj = session.scalar(stmt)
@@ -156,7 +157,9 @@ class DbConfigStore(BaseConfigStore):
     async def read(self, k: _KT, cache: bool = True) -> Optional[ConfigModel]:
         if not cache or not self._config_cache.exists(k):
             obj = await self.db.async_run_sync(self._read_config, k=k)
-            obj = obj.copy() if obj else None  # fix: sqlalchemy Instance is not bound to a Session
+            if obj is not None:
+                # fix: sqlalchemy Instance is not bound to a Session
+                obj = ConfigModel.model_validate(obj) if PYDANTIC_V2 else obj.copy()
             self._config_cache.set(k, obj)
             return obj
         return self._config_cache.get(k)
@@ -173,7 +176,9 @@ class DbConfigStore(BaseConfigStore):
                 obj = self._read_config(self.db.session, k=k)
             else:
                 obj = asyncer.syncify(self.db.async_run_sync, raise_sync_error=False)(self._read_config, k=k)  # type: ignore
-            obj = obj.copy() if obj else None  # fix: sqlalchemy Instance is not bound to a Session
+            if obj is not None:
+                # fix: sqlalchemy Instance is not bound to a Session
+                obj = ConfigModel.model_validate(obj) if PYDANTIC_V2 else obj.copy()
             self._config_cache.set(k, obj)
             return obj
         return self._config_cache.get(k)

@@ -23,15 +23,16 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
     "fastapi-amis-admin>=0.6.4",
     "asyncer>=0.0.1",
-    "sqlalchemy-database>=0.1.0",
+    "sqlalchemy-database>=0.1.1",
 ]
 
 [project.urls]
--Source = "https://github.com/amisadmin/fastapi_config"
+Source = "https://github.com/amisadmin/fastapi_config"
 FastAPI-Amis-Admin = "https://github.com/amisadmin/fastapi_amis_admin"
 
 [project.optional-dependencies]
